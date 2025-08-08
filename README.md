@@ -4,6 +4,6 @@ This repository contains the implementation of **D-QMIX** on both **SMAC** and *
 ## File Description 
 
 
-    ├── SMAC                                         # Code for training D-QMIX on SMAC environment
+    ├── SMAC                                         # Code for training D-QMIX on SMAC environments
     │  
-    ├── MPE                                          # Code for training D-QMIX on MPE environment               
+    ├── MPE                                          # Code for training D-QMIX on MPE environments            
