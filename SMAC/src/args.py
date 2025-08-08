@@ -14,7 +14,7 @@ def get_args():
     parser.add_argument('--seed', default=7777, type=int)
     
     # dqmix 
-    parser.add_argument('--coef', default=10.0, type=float)
+    parser.add_argument('--coef', default=1.0, type=float)
     parser.add_argument('--multi_step', default=4, type=int)
     parser.add_argument('--num_cur_step', default=8, type=int)
     parser.add_argument('--mac', default='basic_mac_dqmix', type=str)
