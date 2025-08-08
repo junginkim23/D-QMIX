@@ -1,9 +1,9 @@
 # D-QMIX: Multi-Step Sequential Forward Dynamics Modeling with Global State and Self-Attention for Sample-Efficient Multi-Agent Reinforcement Learning
-This repository provides the code to implement the D-QMIX on SMAC and MPE.
+This repository contains the implementation of **D-QMIX** on both **SMAC** and **MPE** environments.
 
 ## File Description 
 
 
-    ├── Atari                     # Code for learning MIND on Atari environments
+    ├── SMAC                     # Code for training D-QMIX on SMAC environments
     │  
-    ├── DMControl                 # Code for learning MIND on DMControl environments                    
+    ├── MPE                 # Code for training D-QMIX on MPE environments                 
