@@ -3,10 +3,10 @@
     ├── src
        └── components         
        └── config 
-       └── controllers                                                                    # D-QMIX training code
+       └── controllers                                  # D-QMIX training code
        └── envs
        └── learners 
-       └── modules                                                                                # D-QMIX model 
+       └── modules                                      # D-QMIX model 
        └── pretrained_models                            # Folder containing adversary agents trained with MADDPG
        └── runners
        └── utils
@@ -17,5 +17,5 @@
 # How to run 
 You can run the following code once the environment installation is complete.
     
-    `python main.py`
+    python main.py
     
