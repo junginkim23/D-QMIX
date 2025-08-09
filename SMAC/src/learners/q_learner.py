@@ -7,7 +7,7 @@ import os
 from components.episode_buffer import EpisodeBatch
 from modules.mixers.qmix import QMixer
 from modules.heads.mlp import MLPHead
-from utils.loss import BYOLLoss, CosineSimilarityLoss
+from utils.loss import MSFDMLoss
 
 
 class QLearner:
@@ -35,7 +35,7 @@ class QLearner:
 
         # For Self-Supervised Learning
         if self.args.name == 'd_qmix':
-            self.ssl_loss = BYOLLoss()
+            self.ssl_loss = MSFDMLoss()
 
             # Define Momentum Mac
             self.momentum_mac = copy.deepcopy(mac)
@@ -207,6 +207,7 @@ class QLearner:
             self.target_optimizer.zero_grad()
             loss.backward()
             grad_norm = torch.nn.utils.clip_grad_norm_(self.params, self.args.grad_norm_clip)
+            grad_norm_ = torch.nn.utils.clip_grad_norm_(self.target_params, self.args.grad_norm_clip)
             self.optimizer.step()
             self.target_optimizer.step()
 
@@ -223,6 +224,7 @@ class QLearner:
         if t_env - self.log_stats_t >= self.args.learner_log_interval:
             self.logger.log_stat("loss", loss.item(), t_env)
             self.logger.log_stat("grad_norm", grad_norm, t_env)
+            self.logger.log_state("target_grad_norm", grad_norm_, t_env)
             mask_elems = mask.sum().item()
             self.logger.log_stat("td_error_abs", (masked_td_error.abs().sum().item() / mask_elems), t_env)
             self.logger.log_stat("q_taken_mean",
@@ -238,28 +240,6 @@ class QLearner:
             self.target_mixer.load_state_dict(self.mixer.state_dict())
 
         self.logger.console_logger.info("Updated target network")
-
-    def _initialize_momentum_net(self):
-        for param_q, param_k in zip(self.mac.parameters(), self.momentum_mac.parameters()):
-            param_k.data.copy_(param_q.data)  # update
-            param_k.requires_grad = False  # not update by gradient
-
-        for param_q, param_k in zip(self.projector.parameters(), self.momentum_projector.parameters()):
-            param_k.data.copy_(param_q.data)  # update
-            param_k.requires_grad = False  # not update by gradient
-
-    @torch.no_grad()
-    def _update_momentum_net(self):
-        """
-        Exponential Moving Average Update (Same as MoCo Momentum Update)
-        """
-        momentum = self.args.momentum
-        for param_q, param_k in zip(self.mac.parameters(), self.momentum_mac.parameters()):
-            param_k.data.copy_(momentum * param_k.data + (1. - momentum) * param_q.data)
-
-        for param_q, param_k in zip(self.projector.parameters(), self.momentum_projector.parameters()):
-            param_k.data.copy_(momentum * param_k.data + (1. - momentum) * param_q.data)
-
 
     def cuda(self):
         self.mac.cuda()
